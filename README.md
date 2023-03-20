@@ -33,7 +33,7 @@ Once the packages are installed, you can launch the application by following the
 
   2. Run the following command:
 ```python
-streamlit run app.py
+streamlit run main.py
 ```
   3. The application will open in your web browser.
 
