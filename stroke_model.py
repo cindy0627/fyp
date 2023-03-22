@@ -1,9 +1,4 @@
 import pandas as pd
-import seaborn as sns
-import numpy as np
-import matplotlib as matplot
-import sklearn
-
 import warnings
 
 warnings.filterwarnings("ignore")
