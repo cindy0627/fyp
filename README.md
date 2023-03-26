@@ -2,6 +2,22 @@
 
 This web application is designed to help users predict their risk of developing stroke and diabetes. By entering personal information such as lifestyle factors, users can receive a personalized risk assessment and information on prevention strategies.
 
+## File Structure
+- `comparing_diabetes_models.ipynb`: Jupyter Notebook containing code for comparing and evaluating six diabetes models. (default parameter and after parameter tuning)
+- `comparing_stroke_models.ipynb`: Jupyter Notebook containing code for comparing and evaluating six stroke models. (default parameter and after parameter tuning)
+- `data_preprocessing.ipynb`: Jupyter Notebook containing code for preprocessing the diabetes and stroke datasets.
+- `export_diabetes_model.py`: Python script for exporting a optimal diabetes model.
+- `export_stroke_model.py`: Python script for exporting a optimal stroke model.
+- `final_testset1_diabetes.csv`: CSV file containing the final test dataset for the diabetes model. 
+- `final_testset1_stroke.csv`: CSV file containing the final test dataset for the stroke model.
+- `health.jpg`: Image file used in the web application.
+- `lr_clf_dia.pkl`: Pickle file containing a trained logistic regression classifier for the diabetes model. (from export_diabetes_model.py)
+- `main.py`: Python script containing the main function for running the diabetes and stroke models. (Streamlit application)
+- `minmax_dia.gz`: Gzip file containing the MinMaxScaler object for the diabetes model.
+- `minmax_stroke.gz`: Gzip file containing the MinMaxScaler object for the stroke model.
+- `requirements.txt`: Text file containing the required Python packages and their versions.
+- `rnd_clf.pkl`: Pickle file containing a trained random forest classifier for the stroke model. (from export_stroke_model.py)
+
 ## Getting Started
 To run the application, you will need to have Python 3 installed on your computer. If you do not have Python 3 installed, you can download it from the official Python website: https://www.python.org/downloads/
 
