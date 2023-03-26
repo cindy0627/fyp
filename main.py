@@ -5,6 +5,7 @@ import streamlit as st
 from streamlit_option_menu import option_menu
 
 # -------SETTINGS---------------
+
 page_title = "Patient Health Prediction"
 page_icon = ":hospital:"
 layout = "centered"
@@ -50,7 +51,7 @@ class Stroke:
         "DBD900": "How many of those meals did you get from a fast-food or pizza place a week?",
         "FSDAD": "What is your food security level? (1 for full, 2 for marginal, 3 for low, 4 for very low)"
     }
-    special_list = ["HSD010", "SLD010H", "PFQ061R", "OCQ180", "DBD900", "FSDAD", "MCQ160F"]
+    special_list = ["HSD010", "SLD010H", "PFQ061R", "OCQ180", "DBD900", "FSDAD", "MCQ160F"]  # non yes-no question
 
     minmax = joblib.load("minmax_stroke.gz")
 
@@ -65,7 +66,7 @@ class Diabetes:
     var_string_list = ["BPQ020", "DIQ180", "MCQ300C", "MCQ080", "MCQ365B", "HEQ030", "HSQ520", "OHQ835",
                        "MCQ365C", "INQ020", "CSQ110", "FSD032A", "DUQ200", "MGATHAND", "DBD100", "INQ030", "OCQ260",
                        "FSD032C"]
-    special_list = ["FSD032A", "DBD100", "OCQ260", "FSD032C"]
+    special_list = ["FSD032A", "DBD100", "OCQ260", "FSD032C"]  # non yes-no question
 
     health_questions = {
         "BPQ020": "Have you ever been told by a doctor that you had high blood pressure?",
@@ -144,20 +145,22 @@ class Patient:
 # ------------------------------
 
 # ------FUNCTION-----------
-def BackgroundInfo():
-    st.header(f"Background Information")
 
-    col1, col2 = st.columns(2)
-    with col1:
-        st.caption(
-            "Chronic diseases are a major public health concern in Hong Kong. According to the Department of Health, chronic diseases such as diabetes, hypertension, and cardiovascular diseases are the leading causes of death in the city. ")
-        st.caption(
-            "In addition, the prevalence of these diseases has been increasing over the years due to an aging population, unhealthy lifestyle habits, and the growing burden of obesity. The government has implemented various measures to address this issue, such as promoting healthy living through education and awareness campaigns, providing affordable healthcare services, and encouraging regular health screenings.")
-        st.caption("However, there is still much work to be done to combat the rise of chronic diseases in Hong Kong.")
-    with col2:
+
+def BackgroundInfo():
+
+    with st.columns(3)[1]:
         from PIL import Image
         image = Image.open('health.jpg')
         st.image(image, caption='')
+
+    st.markdown(
+        '<div style="text-align: justify;">'
+        "Chronic diseases are a major public health concern in Hong Kong. According to the Department of Health, chronic diseases such as diabetes, hypertension, and cardiovascular diseases are the leading causes of death in the city. "
+        '<br>''<br>'"In addition, the prevalence of these diseases has been increasing over the years due to an aging population, unhealthy lifestyle habits, and the growing burden of obesity. The government has implemented various measures to address this issue, such as promoting healthy living through education and awareness campaigns, providing affordable healthcare services, and encouraging regular health screenings."
+        '<br>''<br>'"However, there is still much work to be done to combat the rise of chronic diseases in Hong Kong."
+        '</div>',
+        unsafe_allow_html=True)
 
 
 def StrokePredict():
@@ -168,10 +171,7 @@ def StrokePredict():
     now = Stroke()
 
     # Display the consent agreement form
-    ConsentAgree()
-    st.write("")
-    st.write("By clicking 'I agree.', you agree to the terms and conditions.")
-    check = st.checkbox("I agree.")
+    check = ConsentAgree()
     if check:
 
         with st.form("entry_form"):
@@ -223,9 +223,7 @@ def DiabetesPredict():
     now = Diabetes()
 
     # Display the consent agreement form
-    ConsentAgree()
-    st.write("By clicking 'I agree.', you agree to the terms and conditions.")
-    check = st.checkbox("I agree.")
+    check = ConsentAgree()
     if check:
 
         with st.form("entry_form", clear_on_submit=False):
@@ -300,7 +298,6 @@ def InfoQuery():
         }
     }
 
-    # Main application code
     st.header("Hospital Information")
 
     # Select hospital from dropdown list
@@ -315,10 +312,16 @@ def InfoQuery():
 
 
 def ConsentAgree():
-    st.header("Privacy and Consent Statement for Online Prediction")
+    st.subheader("Privacy and Consent Statement for Online Prediction")
     st.markdown(
-        '<div style="text-align: justify;">We are currently conducting a prediction study focused on stroke and diabetes, incorporating inquiries about daily habits. Our primary objective is to enhance public awareness of risk factors for chronic diseases and promote preventive measures. We assure you that all information collected in this study is held in strict confidentiality and will not be disclosed to any third parties. We do not request any personally identifiable data and the input data will not be retained. Your responses will solely serve research purposes and will be reported in an aggregated format.</div>',
+        '<div style="text-align: justify;">We are currently conducting a prediction study focused on stroke and diabetes, incorporating inquiries about daily habits. '
+        'We assure you that all information collected in this study is held in strict confidentiality and will not be disclosed to any third parties. '
+        '</div>',
         unsafe_allow_html=True)
+    st.write("")
+    st.write("By clicking 'I agree.', you agree to the terms and conditions.")
+    check = st.checkbox("I agree.")
+    return check
 
 
 def get_risk_factors(disease):
@@ -486,7 +489,7 @@ def VisualData(now):
 selected = option_menu(
     menu_title=None,
     options=["Home", "Stroke Prediction", "Diabetes Prediction", "Information Query"],
-    icons=["house", "hospital-fill", "hospital-fill", "envelope"],
+    icons=["house", "syringe", ":hospital:", "envelope"],
     menu_icon="cast",
     default_index=0,
     orientation="horizontal",
