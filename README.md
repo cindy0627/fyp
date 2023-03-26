@@ -16,7 +16,7 @@ This web application is designed to help users predict their risk of developing 
 - `minmax_dia.gz`: Gzip file containing the MinMaxScaler object for the diabetes model.
 - `minmax_stroke.gz`: Gzip file containing the MinMaxScaler object for the stroke model.
 - `requirements.txt`: Text file containing the required Python packages and their versions.
-- `rnd_clf.pkl`: Pickle file containing a trained random forest classifier for the stroke model. (from export_stroke_model.py)
+- `rnd_clf_stroke.pkl`: Pickle file containing a trained random forest classifier for the stroke model. (from export_stroke_model.py)
 
 ## Getting Started
 To run the application, you will need to have Python 3 installed on your computer. If you do not have Python 3 installed, you can download it from the official Python website: https://www.python.org/downloads/
