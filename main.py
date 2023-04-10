@@ -53,6 +53,7 @@ class Stroke:
     }
     special_list = ["HSD010", "SLD010H", "PFQ061R", "OCQ180", "DBD900", "FSDAD", "MCQ160F"]  # non yes-no question
 
+    data_vis_list = ["MCQ160E", "OHQ614", "CSQ030", "INQ030", "DUQ200"]
     minmax = joblib.load("minmax_stroke.gz")
 
 
@@ -67,6 +68,8 @@ class Diabetes:
                        "MCQ365C", "INQ020", "CSQ110", "FSD032A", "DUQ200", "MGATHAND", "DBD100", "INQ030", "OCQ260",
                        "FSD032C"]
     special_list = ["FSD032A", "DBD100", "OCQ260", "FSD032C"]  # non yes-no question
+
+    data_vis_list = ["MCQ300C", "OHQ835", "INQ020", "INQ030"]
 
     health_questions = {
         "BPQ020": "Have you ever been told by a doctor that you had high blood pressure?",
@@ -123,8 +126,9 @@ class Patient:
                 st.subheader("Congratulations! You are possibly not having a stroke.")
             else:
                 self.prediction_result = "positive"
-                st.subheader("You may having a risk of getting stroke! ")
-            st.markdown("""---""")
+                st.markdown("<h1 style='text-align: center; color: grey;'>"
+                            "You may having a risk of getting stroke! "
+                            "</h1>", unsafe_allow_html=True)
 
         else:
             transformData = Diabetes.minmax.transform(df)
@@ -139,7 +143,6 @@ class Patient:
                 st.markdown("<h1 style='text-align: center; color: grey;'>"
                             "You may having a risk of getting diabetes! "
                             "</h1>", unsafe_allow_html=True)
-            st.markdown("""---""")
 
 
 # ------------------------------
@@ -156,9 +159,8 @@ def BackgroundInfo():
 
     st.markdown(
         '<div style="text-align: justify;">'
-        "Chronic diseases are a major public health concern in Hong Kong. According to the Department of Health, chronic diseases such as diabetes, hypertension, and cardiovascular diseases are the leading causes of death in the city. "
-        '<br>''<br>'"In addition, the prevalence of these diseases has been increasing over the years due to an aging population, unhealthy lifestyle habits, and the growing burden of obesity. The government has implemented various measures to address this issue, such as promoting healthy living through education and awareness campaigns, providing affordable healthcare services, and encouraging regular health screenings."
-        '<br>''<br>'"However, there is still much work to be done to combat the rise of chronic diseases in Hong Kong."
+        "The prevalence of chronic diseases has been increasing, leading to significant impacts on individuals and healthcare systems. All countries are actively carrying out disease prediction research for their residents, mainly from two aspects,  disease prediction model and risk factor analysis. These are the existing solutions. The problem is that Traditional risk prediction models rely heavily on medical history, making it difficult for people to notice their illness before going to the hospital for a physical examination. Moreover, new risk factors are mostly ignored by the public and further education on them is indeed warranted. Therefore, we want to develop a patient health prediction system that incorporates daily behaviour data to improve health awareness and reduce the burden of stroke and diabetes on individuals. Here are the details objectives."
+
         '</div>',
         unsafe_allow_html=True)
 
@@ -209,10 +211,13 @@ def StrokePredict():
 
                 # combine user inputs into a dataframe
                 df = user.df_combine()
-                # predict diabetes diseases
-                user.prediction(df)
-                VisualData(now)
-                Recommend(now.name, user)
+                # predict stroke diseases
+                tab1, tab2 = st.tabs(["💊 Prediction result", "📊 Data Visualization and 🌟 Recommendation"])
+                with tab1:
+                    user.prediction(df)
+                with tab2:
+                    VisualData(now, user)
+    VisualBox(now)
 
 
 def DiabetesPredict():
@@ -253,9 +258,13 @@ def DiabetesPredict():
                 # combine user inputs into a dataframe
                 df = user.df_combine()
                 # predict diabetes diseases
-                user.prediction(df)
-                VisualData(now)
-                Recommend(now.name, user)
+                tab1, tab2 = st.tabs(["💊 Prediction result", "📊 Data Visualization and 🌟 Recommendation"])
+                with tab1:
+                    user.prediction(df)
+                with tab2:
+                    VisualData(now, user)
+
+    VisualBox(now)
 
 
 def InfoQuery():
@@ -336,10 +345,10 @@ def get_risk_factors(disease):
 
     # create a dictionary of daily life habits and their associated risk factors for diabetes
     diabetes_risk_factors = {
-        "poor diet": ["increased risk of high blood sugar"],
-        "physical inactivity": ["increased risk of obesity and insulin resistance"],
         "family history": ["increased risk of genetic predisposition"],
-    }
+        "gum disease": ["make it more difficult to control blood sugar levels, potentially worsening diabetes symptoms"],
+        "work stress": ["chronic work stress, such as job strain or high job demands with low control, has been associated with an increased risk of type 2 diabetes"]
+       }
 
     # return the list of risk factors based on the patient's daily life habits for the specific disease
     if disease == "Stroke":
@@ -353,18 +362,17 @@ def get_risk_factors(disease):
 def get_unaware_risk_factors(disease):
     # create a dictionary of daily life habits and their associated unaware risk factors for stroke
     stroke_unaware_risk_factors = {
-        "sleep apnea": ["increased risk of high blood pressure and heart disease"],
         "atrial fibrillation": ["increased risk of blood clots and stroke"],
-        "migraines": ["increased risk of stroke"],
-        "oral health": ["increased risk of heart disease and stroke"]
-    }
+        "oral health": ["gum disease can damage the soft tissue supporting the teeth which may increase the risk of inflammation in brain blood vessels, potentially contributing to the development of stroke"],
+        "changes in the sense of smell": ["affect the olfactory system and increased risk of stroke"],
+        "low income status": ["experience more stress, have poorer access to healthcare that increased risk of stroke"],
+        "sleep apnea": ["sleep less than 6 hours cause low oxygen levels and high carbon dioxide levels in the blood, which can lead to inflammation and damage to the blood vessels in the brain that increased risk of high blood pressure and stroke"],
+        }
 
     # create a dictionary of daily life habits and their associated unaware risk factors for diabetes
     diabetes_unaware_risk_factors = {
         "lack of sleep": ["increased risk of insulin resistance and high blood sugar"],
-        "air pollution": ["increased risk of insulin resistance and high blood sugar"],
-        "night shift work": ["increased risk of insulin resistance and high blood sugar"],
-        "poor oral health": ["increased risk of gum disease and high blood sugar"]
+
     }
 
     # return the list of unaware risk factors based on the patient's daily life habits for the specific disease
@@ -390,10 +398,9 @@ def get_advice(disease):
     diabetes_advice = {
         "healthy diet": "Eating a healthy diet low in sugar and carbohydrates can help manage your blood sugar levels.",
         "regular exercise": "Physical activity can help your body use insulin more effectively and manage your blood sugar levels.",
-        "maintain a healthy weight": "Being overweight or obese can increase your risk of insulin resistance and high blood sugar. Maintaining a healthy weight can help manage your blood sugar levels.",
+        "establish a regular sleep routine": "Aim for 7-8 hours of sleep per night.",
         "check blood sugar levels regularly": "Checking your blood sugar levels regularly can help you monitor your condition and make adjustments to your diet and medication as needed.",
-        "take medication as prescribed": "Taking your medication as prescribed by your doctor can help manage your blood sugar levels."
-    }
+        }
 
     # return the list of advice for the patient to reduce their risk factors
     if disease == "Stroke":
@@ -404,83 +411,142 @@ def get_advice(disease):
         return []
 
 
-def Recommend(disease, user):
-    # ------Recommendation-----------
-    st.subheader("Recommendation")
-    prediction_result = user.prediction_result
+def VisualBox(now):
+    import plotly.express as px
+    col1, col2 = st.columns(2)
+    options_dict = now.health_questions
+    options_dict.update(now.other_questions)
+    with col1:
+        st.subheader("All Respondents Distribution")
+        # Create a selectbox for choosing the x-axis attribute
+        binary_variable = st.selectbox("Select attribute", options_dict.keys())
+        selected_value = options_dict[binary_variable]
+        # Create a button to update the scatter plot
+        if st.button("Update Scatter Plot"):
 
-    # obtain risk factors based on daily life habits for the specific disease
-    risk_factors = get_risk_factors(disease)
-    # obtain unaware risk factors based on daily life habits for the specific disease
-    unaware_risk_factors = get_unaware_risk_factors(disease)
+            # Compute the counts of each category of the selected binary variable for each class
+            positive_counts = now.df.loc[now.df[now.target] == 1, binary_variable].value_counts()
+            negative_counts = now.df.loc[now.df[now.target] == 0, binary_variable].value_counts()
 
-    if prediction_result == "positive":
-        # provide feedback to the patient based on their risk factors
-        st.write("Based on your daily habits, you are at risk of getting", disease)
-        st.write("The following risk factors may contribute to your condition:")
-        for factor in risk_factors:
-            st.write("- ", factor, ": ", (str(risk_factors[factor]).replace("['", '').replace("']", '')))
-        st.write("There are also some unaware risk factors that you should be aware of:")
-        for factor in unaware_risk_factors:
-            st.write("- ", factor)
-        st.write("We recommend that you take the following actions to reduce your risk:")
-        for advice in get_advice(disease):
-            st.write("- ", advice)
-    else:
-        # provide feedback to the patient to maintain their healthy lifestyle habits
-        st.write("Based on your daily habits, you are not at risk of getting", disease)
-        st.write("However, there are some unaware risk factors that you should be aware of:")
-        for factor in unaware_risk_factors:
-            st.write("- ", factor, ":", (str(unaware_risk_factors[factor]).replace("['", '').replace("']", '')))
-        st.write(
-            "We recommend that you continue to maintain your healthy lifestyle habits to prevent the risk of getting",
-            disease, ".")
+            # Create a stacked bar chart of the binary variable
+            fig = go.Figure(data=[
+                go.Bar(name='Positive', x=positive_counts.index, y=positive_counts.values),
+                go.Bar(name='Negative', x=negative_counts.index, y=negative_counts.values)
+            ])
+            for v in now.health_questions:
+                if v == binary_variable:
+                    question = now.health_questions[v]
+            for v in now.other_questions:
+                if v == binary_variable:
+                    question = now.other_questions[v]
+            fig.update_layout(title="Response Distribution of {}".format(selected_value), title_font_size=13, barmode='stack')
+            fig.update_yaxes(title="Count")
+            fig.update_xaxes(title=f"Respond in order (1: Yes, 2: No)")
+            st.plotly_chart(fig, use_container_width=True)
+
+    with col2:
+
+        da = pd.DataFrame(options_dict.items(), columns=['Question code', 'Question'])
+
+        st.table(da)
 
 
-def VisualData(now):
+def VisualData(now,user):
     # ------VISUAL-----------
     st.subheader("Data Visualization")
+    col1, col2 = st.columns(2)
+    with col1:
 
-    df1 = now.df[now.df[now.target] == 1]
-    visual_list = [x for x in now.var_string_list if (x not in now.special_list)]
+        df1 = now.df[now.df[now.target] == 1]
+        visual_list = [x for x in now.data_vis_list]
 
-    for variable in visual_list:
-        fig = go.Figure()
-        fig.update_layout(
-            height=400,
-            width=680,
-            paper_bgcolor="rgba(178,216,216,50)",
+        for variable in visual_list:
+            fig = go.Figure()
+            fig.update_layout(
+                height=400,
+                width=680,
+                paper_bgcolor="rgba(178,216,216,50)",
 
-        )
+            )
 
-        df2 = df1[now.df[{variable}] == 1]
-        df3 = df1[now.df[{variable}] == 2]
+            df2 = df1[now.df[{variable}] == 1]
+            df3 = df1[now.df[{variable}] == 2]
 
-        fig.add_trace(go.Bar(
-            x=df1[now.target].unique(),
-            y=df2[{variable}].value_counts(),
-            name=f"{variable}=Yes",
-            marker_color="rgba(0,76,76,50)"
+            fig.add_trace(go.Bar(
+                x=df1[now.target].unique(),
+                y=df2[{variable}].value_counts(),
+                name=f"{variable}=Yes",
+                marker_color="rgba(0,76,76,50)"
 
-        ))
-        fig.add_trace(go.Bar(
-            x=df1[now.target].unique(),
-            y=df3[{variable}].value_counts(),
-            name=f"{variable}=No",
-            marker_color="rgba(102,178,178,50)"
-        ))
-        for v in now.health_questions:
-            if v == variable:
-                question = now.health_questions[v]
-        for v in now.other_questions:
-            if v == variable:
-                question = now.other_questions[v]
+            ))
+            fig.add_trace(go.Bar(
+                x=df1[now.target].unique(),
+                y=df3[{variable}].value_counts(),
+                name=f"{variable}=No",
+                marker_color="rgba(102,178,178,50)"
+            ))
+            for v in now.health_questions:
+                if v == variable:
+                    question = now.health_questions[v]
+            for v in now.other_questions:
+                if v == variable:
+                    question = now.other_questions[v]
 
-        fig.update_layout(title_text=f"{question} ", barmode="group")
-        fig.update_yaxes(title="Count")
-        fig.update_xaxes(title=f"Having {now.name}")
+            fig.update_layout(title_text=f"{question} ", barmode="group")
+            fig.update_yaxes(title="Count")
+            fig.update_xaxes(title=f"Having {now.name}")
 
-        st.plotly_chart(fig, use_container_width=True)
+            st.plotly_chart(fig, use_container_width=True)
+
+        if now.name == "Stroke":
+            import matplotlib.pyplot as plt
+            import numpy as np
+            import plotly.express as px
+
+            # Define the bin size and range of sleeping hours
+            bin_size = 1
+            bin_range = (0, 12)
+
+            # Create a histogram of sleeping hours
+            sleeping_hours = df1['SLD010H']
+            bins = range(*bin_range, bin_size)
+            hist, edges = np.histogram(sleeping_hours, bins=bins)
+
+            # Create a plotly figure
+            fig = px.area(x=edges.repeat(2)[1:-1], y=hist.repeat(2),
+                          labels=dict(x="Having Stroke", y="Count"),
+                          title="How much sleep do you usually get at night on weekdays or workdays? (Answer in hours)")
+            fig.update_layout(height=400, width=680, paper_bgcolor="rgba(178,216,216,50)")
+
+            # Convert the plotly figure to a Streamlit figure and display it
+            st.plotly_chart(fig)
+    with col2:
+        prediction_result = user.prediction_result
+
+        # obtain risk factors based on daily life habits for the specific disease
+        risk_factors = get_risk_factors(now.name)
+        # obtain unaware risk factors based on daily life habits for the specific disease
+        unaware_risk_factors = get_unaware_risk_factors(now.name)
+
+        if prediction_result == "positive":
+            # provide feedback to the patient based on their risk factors
+            st.write("The following risk factors may contribute to your condition:")
+            for factor in risk_factors:
+                st.write("- ", factor, ": ", (str(risk_factors[factor]).replace("['", '').replace("']", '')))
+            st.write("There are also some unaware risk factors that you should be aware of:")
+            for factor in unaware_risk_factors:
+                st.write("- ", factor)
+            st.subheader("We recommend that you take the following actions to reduce your risk:")
+            for advice in get_advice(now.name):
+                st.write("- ", advice)
+        else:
+            # provide feedback to the patient to maintain their healthy lifestyle habits
+            st.write("Based on your daily habits, you are not at risk of getting {}.".format(now.name))
+            st.write("However, there are some unaware risk factors that you should be aware of:")
+            for factor in unaware_risk_factors:
+                st.write("- ", factor, ":", (str(unaware_risk_factors[factor]).replace("['", '').replace("']", '')))
+            st.subheader("We recommend that you continue to maintain your healthy lifestyle habits to prevent the risk of getting {}.".format(now.name))
+
 
 
 # ----NAVIGATION MENU-------
