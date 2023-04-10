@@ -17,6 +17,7 @@ This web application is designed to help users predict their risk of developing 
 - `minmax_stroke.gz`: Gzip file containing the MinMaxScaler object for the stroke model.
 - `requirements.txt`: Text file containing the required Python packages and their versions.
 - `rnd_clf_stroke.pkl`: Pickle file containing a trained random forest classifier for the stroke model. (from export_stroke_model.py)
+- `all the csv file`: csv file containing the dataset
 
 ## Getting Started
 To run the application, you will need to have Python 3 installed on your computer. If you do not have Python 3 installed, you can download it from the official Python website: https://www.python.org/downloads/
@@ -27,17 +28,13 @@ Once you have Python 3 installed, you can install the necessary packages by foll
 
   2. Navigate to the directory where you have downloaded the project files.
 
-  3. Run the following command to create a virtual environment:
+  3. Run the following command to create a virtual streamlit environment:
   ```python
-python -m venv env
+virtualenv streamlitenv
 ```
   4. Activate the virtual environment by running the following command:
-  ```python
-source env/bin/activate
-```
-If you are using Windows, the command to activate the virtual environment will be:
 ```python
-env\Scripts\activate
+streamlitenv\Scripts\activate
 ```
   5. Install the necessary packages by running the following command:
 ```python
