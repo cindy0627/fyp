@@ -50,7 +50,7 @@ streamlit run main.py
 ```
   3. The application will open in your web browser.
 
-### Or you can directly use deployed demo application by: https://cindy0627-fyp-main-0uidmz.streamlit.app/
+### Or you can directly use deployed demo application by: [https://cindy0627-fyp-main-0uidmz.streamlit.app/](https://cindy0627-fyp-main-0uidmz.streamlit.app/)
 
 ## Usage
 To use the application, simply enter your personal information into the form after clicking consent agreement. You can select either stroke or diabetes as the disease you want to predict.
